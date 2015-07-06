@@ -35,6 +35,223 @@
 		<div class="reveal">
 			<!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
+        <section>
+					<h1>word2vec/doc2vec</h1>
+          <h3>Efficient Estimation of Words in Vector Space<h3>
+          <img width="140" height="140" data-src="img/nycdssg_logo.jpeg" alt="nycdssg logo">
+          <p>
+            <small>NYCDSSG demo by: Eric Xu</small>
+					</p>
+				</section>
+
+        <section>
+          <h2>Agenda</h2>
+          <ul>
+            <li>Popular Methods for Sentiment Analysis</li>
+            <li>What is Word2Vec/Doc2Vec?</li>
+            <li>Doc2Vec Beyond NLP</li>
+            <li>Demo: Word Vectors as Machine Learning Features</li>
+          </ul>
+        </section>
+
+        <section>
+          <section>
+            <h2>What is Sentiment Analysis?</h2>
+            <img data-src="img/robot_emotions.jpg" alt="robot sentiments">
+            <p>Sentiment analysis is the attempt to derive the emotion or "feeling" of a body of text.</p>
+			  	</section>
+          <section>
+            <h2>Applications of Sentiment Analysis</h2>
+            <p>
+              <img width="400" data-src="img/why_should_i_care.jpg" alt="why should i care?">
+            </p>
+			  		<ul class="fragment" style="font-size:28px;">
+              <li>The Obama administration used sentiment analysis to gauge public opinion ahead of the 2012 election.</li>
+              <li>Brands responding to social media comments in reaction to Super Bowl ads.</li>
+              <li>
+                Shifts in sentiment on social media have been shown to correlate with 
+                <a href="http://sentdex.com/financial-analysis/" target="_blank">shifts in the stock market.</a>
+              </li>
+			  		</ul>
+			  	</section>
+				</section>
+
+
+				<section>
+					<section>
+            <h2>Popular Approaches to Sentiment Analysis</h2>
+            <p>
+              <img data-src="img/that_way.jpeg" alt="that way">
+            </p>
+            <ul>
+              <li>Use a dictionary of good and bad words</li>
+              <li>Bag-of-Words as features for a classifier</li>
+            </ul>
+          </section>
+					<section>
+            <h3>Dictionary of Good and Bad Words</h3>
+            <ul>
+              <li>{"good words": ["good", "great", "amazing"]} +1</li>
+              <li>{"bad words": ["bad", "aweful", "terrible"]} -1</li>
+              <br>
+              <li>"This pizza is amazing!" = 1</li>
+              <li>"Last night's movie was aweful. = -1</li>
+              <li>"I want their new cd so bad!" = -1 (wrong)</li>
+            </ul>
+          </section>
+					<section>
+            <h3>Bag-of-Words</h3>
+            <ul>
+              <li>Each review is treated as a 1 by N vector, where N is the size of the vocabulary.</li>
+              <li>Each column is a word, and the value is the number of times that word appears.</li>
+              <br>
+              <li>"bag of bag of words" = [2 ,2, 1]</li>
+            </ul>
+					</section>
+					<section>
+            <p>
+              <img width="250" data-src="img/fox_dog.png" alt="fox jumps dog">
+            </p>
+            <ul>
+              <li>Bigrams:</li>
+              <p style="font-style: italic;"><span style="color: lightblue;">The quick</span> brown fox jumps over the lazy dog.</p>
+              <p style="font-style: italic;">The <span style="color: lightblue;">quick brown</span> fox jumps over the lazy dog.</p>
+              <li>Trigrams:</li>
+              <p style="font-style: italic;"><span style="color: pink;">The quick brown</span> fox jumps over the lazy dog.</p>
+              <p style="font-style: italic;">The <span style="color: pink;">quick brown fox</span> jumps over the lazy dog.</p>
+            </ul>
+					</section>
+					<section>
+            <h3>Limitations of BoW and BoNG</h3>
+            <ul>
+              <li>BoW ignores context and word order.</li>
+              <ul>
+                <li>“That’s true, I am not a fan.”</li>
+                <li>“That’s not true, I am a fan.”</li>
+              </ul>  
+              <li>BoNG captures context but leads to very large feature space.</li>
+              <li>Both ignore semantics of the words. For example, “wine,” "whiskey” and “football” are equally distant.</li>
+            </ul>
+					</section>
+				</section>
+
+				<section>
+					<section>
+            <h2>Word2Vec by Google</h2>
+            <img width="450" data-src="img/words_in_space.png" alt="words in space">
+            <ul style="font-size:26px;">
+              <li>Attempts to associate words with points in space. The spatial distance between words then describes the relation (similarity) between these words.</li>
+              <li>Captures word context and preserves more linear regularities between words.</li>
+              <li>Has lower computational complexity than previous neural network language models.</li>
+            </ul>
+					</section>
+					<section>
+            <h2>Word2Vec by Google</h2>
+            <img style="border:none; box-shadow:none;" data-src="img/w2v_transformation.png" alt="word2vec input output">
+            <ul style="font-size:26px;">
+              <li>Simple neural network with a single hidden layer and uses softmax regression to compute the probability distributions.</li>
+              <li>The models are trained using stochastic gradient descent and back propagation to minimize the loss function.</li>
+            </ul>
+					</section>
+          <section>
+            <h3>Word2Vec: Continuous Bag-of-Words</h3>
+            <p style="font-size:26px;position:absolute;left:740px;top:260px;width:300px;text-align:left;">CBOW predicts the current word based on the context.</p>
+            <img width="420" style="border:none;box-shadow:none;" data-src="img/cbow_w_text.png" alt="cbow explained">
+			  	</section>
+          <section>
+            <h3>Word2Vec: Skip-gram (default)</h3>
+            <p style="font-size:26px;position:absolute;left:740px;top:260px;width:300px;text-align:left;">Skip-gram predicts surrounding words given the current word.</p>
+            <img width="420" style="border:none;box-shadow:none;" data-src="img/skipgram_w_text.png" alt="skipgram explained">
+			  	</section>
+          <section>
+            <h3>Linguistic Regularities in Word Vector Space</h3>
+            <ul style="font-size:30px;">
+              <li>Word2Vec's distributed representations of words contain surprisingly a lot of syntactic and semantic information.</li>
+              <li>Can use basic algebra between word vectors to find relationships between words:</li>
+            </ul>
+            <p>king - man + woman = ?</p>
+            <img class="fragment" width="600" data-src="img/king_minus_man.png" alt="king minus man">
+			  	</section>
+          <section>
+            <h3>Linguistic Regularities in Word Vector Space</h3>
+            
+            <img style="position:absolute; left:300px; max-width:none; max-height:none;" data-src="img/vector_frame_01.gif" alt="vectors algebra">
+            <img class="fragment" style="position:absolute; left:300px; max-width:none; max-height:none;" data-src="img/vector_frame_02.gif" alt="vectors algebra">
+            <img class="fragment" style="position:absolute; left:300px; max-width:none; max-height:none;" data-src="img/vector_frame_03.gif" alt="vectors algebra">
+            <img class="fragment" style="position:absolute; left:300px; max-width:none; max-height:none;" data-src="img/vector_frame_04.gif" alt="vectors algebra">
+            <img class="fragment" style="position:absolute; left:300px; max-width:none; max-height:none;" data-src="img/vector_frame_05.gif" alt="vectors algebra">
+            <img class="fragment" style="position:absolute; left:300px; max-width:none; max-height:none;" data-src="img/vector_frame_06.gif" alt="vectors algebra">
+            <img class="fragment" style="position:absolute; left:300px; max-width:none; max-height:none;" data-src="img/vector_frame_07.gif" alt="vectors algebra">
+            <img class="fragment" style="position:absolute; left:300px; max-width:none; max-height:none;" data-src="img/vector_frame_08.gif" alt="vectors algebra">
+            <img class="fragment" style="position:absolute; left:300px; max-width:none; max-height:none;" data-src="img/vector_frame_09.gif" alt="vectors algebra">
+            <img class="fragment" style="position:absolute; left:300px; max-width:none; max-height:none;" data-src="img/vector_frame_10.gif" alt="vectors algebra">
+            <img class="fragment" style="position:absolute; left:300px; max-width:none; max-height:none;" data-src="img/vector_frame_12.gif" alt="vectors algebra">
+            <img class="fragment" style="position:absolute; left:300px; max-width:none; max-height:none;" data-src="img/vector_frame_13.gif" alt="vectors algebra">
+            <img class="fragment" style="position:absolute; left:300px; max-width:none; max-height:none;" data-src="img/vector_frame_14.gif" alt="vectors algebra">
+            <img class="fragment" style="position:absolute; left:300px; max-width:none; max-height:none;" data-src="img/vector_frame_15.gif" alt="vectors algebra">
+			  	</section>
+          <section>
+            <h2> Let's Take Her For a Spin!</h2>
+            <img width="600" data-src="img/for_a_spin.jpg" alt="take it for a spin">
+            <p style="font-size:26px;">
+              We'll use the pre-trained vectors from the Google News dataset<br>
+              (about 100 billion words)
+            </p>
+			  	</section>
+          <section>
+          <section>
+            <h3>Linguistic Regularities in Word Vector Space</h3>
+		  			<table style="font-size:32px;">
+		  				<thead>
+		  					<tr>
+		  						<th>Expression</th>
+		  						<th>Nearest Token</th>
+		  					</tr>
+		  				</thead>
+		  				<tbody>
+		  					<tr>
+		  						<td>Paris - France + Italy</td>
+		  						<td>Rome</td>
+		  					<tr>
+		  					<tr>
+		  						<td>bigger - big + cold</td>
+		  						<td>colder</td>
+		  					<tr>
+		  					<tr>
+		  						<td>sushi - Japan + Germany</td>
+		  						<td>bratwurst</td>
+		  					<tr>
+		  					<tr>
+		  						<td>Cu - copper + gold</td>
+		  						<td>Au</td>
+		  					<tr>
+		  					<tr>
+                  <td>Windows - Microsoft + Google</td>
+		  						<td>Android</td>
+		  					<tr>
+		  					<tr>
+                  <td>Montreal Canadiens - Montreal + Toronto</td>
+		  						<td>Toronto Maple Leafs</td>
+		  					<tr>
+		  				</tbody>
+		  			</table>
+            <img class="fragment" width="200" data-src="img/bravo.jpg" alt="bravo">
+			  	</section>
+        </section>
+
+				<section>
+          <h2>Word2Vec Use Cases</h2>
+          <ul>
+            <li>
+              <a href="http://insightdatascience.com/blog/thisplusthat_a_search_engine_that_lets_you_add_words_as_vectors.html">
+                ThisPlusThat:
+              </a>a search engine that lets you "add" words as vectors.
+            </li>
+        </section>
+
+				<section style="text-align: left;">
+          <h2>Demo: IMDB Sentiment Analysis</h2>
+				</section>
 			</div>
 		</div>
 
