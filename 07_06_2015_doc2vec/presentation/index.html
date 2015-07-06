@@ -49,8 +49,8 @@
           <ul>
             <li>Popular Methods for Sentiment Analysis</li>
             <li>What is Word2Vec/Doc2Vec?</li>
-            <li>Doc2Vec Beyond NLP</li>
             <li>Demo: Word Vectors as Machine Learning Features</li>
+            <li>Doc2Vec Beyond NLP</li>
           </ul>
         </section>
 
@@ -199,7 +199,6 @@
             </p>
 			  	</section>
           <section>
-          <section>
             <h3>Linguistic Regularities in Word Vector Space</h3>
 		  			<table style="font-size:32px;">
 		  				<thead>
@@ -237,21 +236,72 @@
 		  			</table>
             <img class="fragment" width="200" data-src="img/bravo.jpg" alt="bravo">
 			  	</section>
+			  	<section>
+            <h2>Word2Vec Use Cases</h2>
+            <ul>
+              <li>
+                <a href="http://insightdatascience.com/blog/thisplusthat_a_search_engine_that_lets_you_add_words_as_vectors.html">
+                  ThisPlusThat:
+                </a>a search engine that lets you "add" words as vectors.
+              </li>
+            </ul>
+          </section>
         </section>
-
+        
 				<section>
-          <h2>Word2Vec Use Cases</h2>
-          <ul>
-            <li>
-              <a href="http://insightdatascience.com/blog/thisplusthat_a_search_engine_that_lets_you_add_words_as_vectors.html">
-                ThisPlusThat:
-              </a>a search engine that lets you "add" words as vectors.
-            </li>
+					<section>
+            <h2>Doc2Vec: Beyond Word2Vec</h2>
+            <br>
+            <p>An unsupervised algorithm that learns fixed-length feature representations from variable-length pieces of texts, such as sentences, paragraphs, and documents.</p>
+            <br>
+            <p style="font-size:26px; text-align:right;">- Quoc Le and Tomas Mikolov, 2014</p>
+					</section>
+					<section>
+            <h2>Word2Vec Approach</h2>
+            <p style="font-size:26px;">Calculate the vector of sentences by averaging the vector of their words.</p>
+            <img style="border:none; box-shadow:none;" data-src="img/w2v_sentence_vec.png" alt="word2vec sentence vector">
+          </section>
+					<section>
+            <h2>Doc2Vec</h2>
+            <img style="border:none; box-shadow:none;" data-src="img/doc2vec_models_labeled.png" alt="doc2vec models">
+          </section>
+					<section>
+            <h2>Doc2Vec: Distributed BOW Model</h2>
+            <p style="font-size:26px;">A paragraph vector simply extends the context to the whole document.</p>
+            <br>
+            <img style="border:none; box-shadow:none;" data-src="img/doc2vec_context.png" alt="doc2vec context">
+          </section>
         </section>
 
-				<section style="text-align: left;">
+        <section style="text-align: left;">
           <h2>Demo: IMDB Sentiment Analysis</h2>
+          <ol style="width:100%;">
+            <li>
+              <a href="https://github.com/Eric-Xu/nycdssg_talks/blob/master/07_06_2015_doc2vec/imdb_posneg_dict.ipynb" target="_blank">
+                Positive-Negative Word Dictionary 
+              </a>(AUC 0.79)
+            </li>
+            <li>
+              <a href="https://github.com/Eric-Xu/nycdssg_talks/blob/master/07_06_2015_doc2vec/imdb_bow.ipynb" target="_blank">
+                Bag-of-Words 
+              </a>(AUC 0.87)
+            </li>
+            <li>
+              <a href="https://github.com/Eric-Xu/nycdssg_talks/blob/master/07_06_2015_doc2vec/imdb_word2vec.ipynb" target="_blank">
+                Word2Vec 
+              </a>(AUC 0.92)
+            </li>
+            <li>
+              <a href="https://github.com/Eric-Xu/nycdssg_talks/blob/master/07_06_2015_doc2vec/imdb_doc2vec.ipynb" target="_blank">
+                Doc2Vec 
+              </a>(AUC 0.94)
+            </li>
+          </ol>
 				</section>
+        
+        <section style="text-align: left;">
+          <h2>Doc2Vec Beyond NLP</h2>
+        </section>
 			</div>
 		</div>
 
