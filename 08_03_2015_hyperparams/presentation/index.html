@@ -274,6 +274,19 @@
               <li>With random search, all 9 trials explore distinct values of \(g\).</li>
             </ul>
           </section>
+
+          <section>
+            <h2>Why 60 Trials?</h2>
+            <ul style="font-size:26px;">
+              <li>Given a distribution over a sample space with a finite maximum</li>
+              <li>Each random draw has a 5% chance of falling within the top 5% of the true maximum.</li>
+              <li>If we draw \(n\) points independently, the probability that all will miss the desired interval is \((1-0.05)^n\)</li>
+              <li>The probability that at least one of them succeeds in hitting the desired interval is 1 minus the above.</li>
+              <li>So the number of draws necessary to achieve a 95% probability of success is \(1-(1-0.05)^n>0.95\)</li>
+              <li>When solved, we get \(n >= 60\)
+              <li>The moral of the story is: <span style="font-weight:bold;">if the close-to-optimal region of hyperparameters occupies at least 5% of the grid surface, then random search with 60 trials will find that region with high probability.</span></li>
+            </ul>
+          </section>
           
           <section>
             <h2>Random Search Pros and Cons</h2>
