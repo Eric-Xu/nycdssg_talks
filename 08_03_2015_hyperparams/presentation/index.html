@@ -50,7 +50,7 @@
           <h3>Optimizing hyper-parameters for machine learning</h3>
           <img width="200" data-src="img/nycdssg_logo.jpeg" alt="nycdssg logo">
           <p>
-            <small>NYCDSSG demo by: Eric Xu</small>
+            <small>NYDSSG demo by: Eric Xu</small>
             <br>
             <small>August 3, 2015 @Spotify</small>
           </p>
@@ -77,10 +77,29 @@
           </section>
 
           <section>
+            <h2>Machine Learning Pipeline</h2>
+            <ol>
+              <li>Find an interesting dataset</li>
+              <li>Specify what questions we'd like to answer about that dataset</li>
+              <li>Pick an appropriate model to answer those questions (or develop our own!)</li>
+              <li>Learn the parameters of our model with respect to the dataset</li>
+              <li>Evaluate our results and draw conclusions</li> 
+            </ol>
+          </section>
+				</section>
+
+        <section>
+          <section>
             <h2>What are hyper-parameters?</h2>
             <blockquote style="width:100%; box-shadow:none;" cite="http://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html">
               sklearn.neighbors.KNeighborsClassifier(
-              <span style="font-weight:bold;">n_neighbors=5, weights='uniform', algorithm='auto', leaf_size=30, p=2, metric='minkowski', metric_params=None, **kwargs</span>)
+              <span style="font-weight:bold;">n_neighbors</span>=5, 
+              <span style="font-weight:bold;">weights</span>='uniform', 
+              <span style="font-weight:bold;">algorithm</span>='auto', 
+              <span style="font-weight:bold;">leaf_size</span>=30, 
+              <span style="font-weight:bold;">p</span>=2, 
+              <span style="font-weight:bold;">metric</span>='minkowski', 
+              <span style="font-weight:bold;">metric_params</span>=None)
             </blockquote>
             <ul>
               <li>High level settings pertaining to a machine learning model that govern how a model performs</li> 
@@ -139,14 +158,15 @@
           </section>
 
           <section>
-            <h2>Which Parameters to Tune?</h2>
+            <h2>Making Choices</h2>
             <div>
               <img width="400" style="border:none;" data-src="img/so_many_choices.jpg" alt="too many choices">
             </div>
-            <ul style="font-size:26px;">
-              <li>4 parameters with 6 possible values each means \(6^4\) = 1,296 combinations</li>
-              <li>What's the correct range and distribution for numerical parameters?</li>
-              <li>Finding the right parameter values could be the difference between random guessing and state-of-the-art performance.</li>
+            <ul>
+              <li>Do we tune every parameter or just a subset?</li>
+              <li>What's the correct range to search over?</li>
+              <li>How many values should we draw?</li>
+              <li>What's the distribution for numerical parameters?</li>
             </ul>
           </section>
 
@@ -307,6 +327,21 @@
               </ol>
             </div>
           </section>
+        </section>
+
+        <section>
+          <h2>Beyond Grid and Random Search</h2>
+          <p style="text-align:justify;">
+            Instead of generating all the candidate points upfront and evaluating the batch in parallel, smart tuning techniques pick a few hyperparameter settings, evaluate their quality, then decide where to sample next. The goal is to make fewer evaluations overall and save on the overall computation time.
+          </p>
+          <ul style="font-size:28px;">
+            <li>hyperopt (Python)</li>
+            <li>Spearmint (Python)</li>
+            <li>BayesOpt (C++ with Python and Matlab/Octave interfaces)</li>
+            <li>SMAC (Java)</li>
+            <li>REMBO (Matlab)</li>
+            <li>MOE (C++/Python)</li>
+          </ul>
         </section>
 
         <section>
