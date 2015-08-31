@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>hyperparameter optimization</title>
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/solarized.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+    <style type="text/css">
+      .min-style-svg {
+        margin: 0         !important;
+        border: none      !important;
+        background: none  !important;
+        box-shadow: none  !important;
+      }
+    </style>
+  </head>
+
+	<body>
+		<div class="reveal">
+			<!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section>
+          <h2 style="margin: 0 10%;">Optimizing hyper-parameters for machine learning</h2>
+          <img width="200" data-src="img/nycdssg_logo.jpeg" alt="nycdssg logo">
+          <p>
+            <small>NYDSSG demo by: Eric Xu</small>
+            <br>
+            <small>September 1, 2015 @Sailthru</small>
+          </p>
+        </section>
+          
+        <section>
+          <h2>About Me</h2>
+          <ul style="margin-bottom:50px;">
+            <li>Rails developer</li>
+            <li>Data science course at General Assembly</li>
+            <li>Data science and engineering at Outbrain</li>
+          </ul>
+				</section>
+
+        <section>
+          <img class="min-style-svg" width="200" height="200" data-src="img/stopwatch.svg" alt="stopwatch">
+          <h2 style="margin-top:-40px;">Agenda</h2>
+          <ul>
+            <li>What are hyper-parameters?</li>
+            <li>Grid search</li>
+            <li>Random search</li>
+            <li>Hyperopt</li>
+            <li>5 minute break</li>
+            <li>iPython notebook demo</li>
+          </ul>
+				</section>
+
+        <section>
+          <section>
+            <h2>Motivation</h2>
+            <ul>
+              <li>How can we make machine learning more accessible?</li> 
+            </ul>
+          </section>
+
+          <section>
+            <h2>Machine Learning Pipeline</h2>
+            <ol>
+              <li>Find an interesting dataset</li>
+              <li>Specify what questions we'd like to answer about that dataset</li>
+              <li>Pick an appropriate model to answer those questions (or develop our own!)</li>
+              <li>Learn the parameters of our model with respect to the dataset</li>
+              <li>Evaluate our results and draw conclusions</li> 
+            </ol>
+          </section>
+				</section>
+
+        <section>
+          <section>
+            <h2>What are hyper-parameters?</h2>
+            <blockquote style="width:100%; box-shadow:none;" cite="http://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html">
+              sklearn.neighbors.KNeighborsClassifier(
+              <span style="font-weight:bold;">n_neighbors</span>=5, 
+              <span style="font-weight:bold;">weights</span>='uniform', 
+              <span style="font-weight:bold;">algorithm</span>='auto', 
+              <span style="font-weight:bold;">leaf_size</span>=30, 
+              <span style="font-weight:bold;">p</span>=2, 
+              <span style="font-weight:bold;">metric</span>='minkowski', 
+              <span style="font-weight:bold;">metric_params</span>=None)
+            </blockquote>
+            <ul>
+              <li>High level settings pertaining to a machine learning model that govern how a model performs</li> 
+              <li>Must be specified before the training procedure</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Difference in Model Parameters</h2>
+              <table style="font-size:28px;">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Number of Parameters</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Multinomial Naive Bayes</td>
+                    <td>3</td>
+                  </tr>
+                  <tr>
+                    <td>Linear Regression</td>
+                    <td>4</td>
+                  </tr>
+                  <tr>
+                    <td>Linear Discriminant Analysis</td>
+                    <td>6</td>
+                  </tr>
+                  <tr>
+                    <td>K-Nearest Neighbors</td>
+                    <td>7</td>
+                  </tr>
+                  <tr>
+                    <td>Decision Tree</td>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <td>Logistic Regression</td>
+                    <td>12</td>
+                  </tr>
+                  <tr>
+                    <td>Support Vector Machine</td>
+                    <td>13</td>
+                  </tr>
+                  <tr>
+                    <td>Random Forest</td>
+                    <td>15</td>
+                  </tr>
+                  <tr>
+                    <td>Neural Network</td>
+                    <td>30+</td>
+                  </tr>
+                </tbody>
+              </table>
+          </section>
+
+          <section>
+            <h2>Making Choices</h2>
+            <div>
+              <img width="400" style="border:none;" data-src="img/so_many_choices.jpg" alt="too many choices">
+            </div>
+            <ul class="fragment">
+              <li>Do we tune every parameter or just a subset?</li>
+              <li>What's the correct range to search over?</li>
+              <li>How many values should we draw?</li>
+              <li>What's the distribution for numerical parameters?</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>How to Tune Model Parameters?</h2>
+            <div>
+              <img width="400" style="border:none;" data-src="img/witch_of_oz.jpg" alt="the witch of oz">
+            </div>
+            <ul style="font-size:26px;" class="fragment">
+              <li>Expert intuition</li> 
+              <li>Grid search</li> 
+              <li>Random search</li>
+              <li>Sequential model-based search</li>
+              <li class="fragment">Intern search
+                <img width="400" style="border:none; position:fixed; top:130px; left:220px; width:510px;" data-src="img/interns.png" alt="interns">
+              </li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>Grid Search</h2>
+            <div>
+              <img width="400" style="border:none;" data-src="img/grid_search.png" alt="grid search">
+            </div>
+            <p style="font-size:26px;">
+              The traditional way of performing hyperparameter optimization has been grid search, which is simply an exhaustive searching through a manually specified subset of the hyperparameter space of a learning algorithm.
+            </p>
+          </section>
+
+          <section>
+            <h2>Grid Search Pros and Cons</h2>
+            <div style="text-align:left; font-size:28px;" class="fragment">
+              <span style="font-style:italic;">Pros:</span>
+              <br>
+              <ol style="margin-left:60px;">
+                <li>Simple to understand</li>
+                <li>Easy to implement</li>
+                <li>Embarrassingly parallel</li>
+                <li>Unlikely to miss anything too obvious</li>
+              </ol>
+              <br><br>
+              <span style="font-style:italic;">Cons:</span>
+              <br>
+              <ol style="margin-left:60px;">
+                <li>Fixed step size</li>
+                <li>Suffers from the curse of dimensionality</li>
+                <li>If irrelevant parameters or range values, the number of wasted trials is exponential in the number of search dimensions that turn out to be irrelevant.</li>
+              </ol>
+            </div>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>Random Search</h2>
+            <div>
+              <img width="400" style="border:none;" data-src="img/random_search.png" alt="random search">
+            </div>
+            <ul style="font-size:26px;">
+              <li>Instead of searching over the entire grid, random search only evaluates a random sample of points on the grid.</li>
+              <li>Instead of defining a finite set of parameter values to try, we specify the distribution range and the number of trials to run.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Random Search</h2>
+            <div style="margin: 0 20%;">
+              <img width="300" style="border:none; float:left; margin:0 20px 0 0;" data-src="img/sumo_underdog.png" alt="sumo underdog">
+              <p style="font-size:26px; text-align:left;">
+                Not taken seriously because it can't possibly compete against an exhaustive grid search.
+                <span class="fragment" style="font-weight:bold;">Or can it?</span>
+              </p>
+            </div>
+          </section>
+
+          <section>
+            <h2>Bergstra and Bengio</h2>
+            <div>
+              <img height="250" style="border:none;" data-src="img/bergstra.jpeg" alt="James Bergstra">
+              <img height="250" style="border:none;" data-src="img/bengio.jpeg" alt="Yoshua Bengio">
+            </div>
+            <ul style="font-size:26px;">
+              <li>
+                James Bergstra and Yoshua Bengio, from the University of Montreal, publishes
+                <a href="http://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a.pdf" target="_blank">
+                  "Random Search for Hyper-Parameter Optimization"
+                </a>in 2012.
+              </li>
+              <li>
+                In surprisingly many instances, random search performs about as well as grid search in a fraction of the trials. 
+              </li>
+              <li>
+                Even with a million unique parameter combinations, trying only
+                <span style="font-weight:bold;">60</span>
+                random points from the grid will achieve near optimal results. WAT!?! 
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Low Effective Dimensionality</h2>
+            <div style="margin:40px 0;">
+              $$f(x,y) = g(x) + h(y) \approx g(x)$$
+            </div>
+            <ul>
+              <li>
+                If a function of two variables \(f(x,y)\) could be approximated by another function of one variable \(g(x)\), we could say that \(f\) has a low effective dimension.
+              </li>
+              <li>
+                In plain english: 
+                <span style="font-style:italic;">Some parameters will affect a model's performance more than others.</span>
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Low Effective Dimensionality</h2>
+            <div>
+              <img width="700" style="border:none;" data-src="img/grid_vs_rand.png" alt="grid vs random search">
+            </div>
+            <ul>
+              <li>\(f(x,y) = g(x) + h(y) \approx g(x)\)</li>
+              <li>With grid search, 9 trials only test \(g(x)\) in 3 distinct places.</li>
+              <li>With random search, all 9 trials explore distinct values of \(g\).</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Why 60 Trials?</h2>
+            <ul style="font-size:26px;">
+              <li>Given a distribution over a sample space with a finite maximum</li>
+              <li>Each random draw has a 5% chance of falling within the top 5% of the true maximum.</li>
+              <li>If we draw \(n\) points independently, the probability that all will miss the desired interval is \((1-0.05)^n\)</li>
+              <li>The probability that at least one of them succeeds in hitting the desired interval is 1 minus the above.</li>
+              <li>So the number of draws necessary to achieve a 95% probability of success is \(1-(1-0.05)^n>0.95\)</li>
+              <li>When solved, we get \(n >= 60\)
+              <li>The moral of the story is: <span style="font-weight:bold;">if the close-to-optimal region of hyperparameters occupies at least 5% of the grid surface, then random search with 60 trials will find that region with high probability.</span></li>
+            </ul>
+          </section>
+          
+          <section>
+            <h2>Random Search Pros and Cons</h2>
+            <div style="text-align:left; font-size:28px;">
+              <span style="font-style:italic;">Pros:</span>
+              <br>
+              <ol style="margin-left:60px;">
+                <li>Easy to implement</li>
+                <li>Embarrassingly parallel</li>
+                <li>Obtains equal or better results than grid search using fewer trials in high-dimensional search spaces</li>
+              </ol>
+              <br><br>
+              <span style="font-style:italic;">Cons:</span>
+              <br>
+              <ol style="margin-left:60px;">
+                <li>No guarantee the space will be explored adequately in low-dimensional searches</li>
+                <li>Might waste computation evaluating points that are very close together</li>
+              </ol>
+            </div>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>Smart(er) Parameter Tuning</h2>
+            <ul>
+              <li>Smart tuning techniques pick a few hyperparameter settings, evaluate their quality, then decide where to sample next.</li>
+              <li>These algorithms invest more time between function evaluations, in order to reduce the number of evaluations overall.</li>
+            </ul>
+          </section>
+          
+          <section>
+            <h2>Bayesian Optimization</h2>
+            <img style="border:none;" data-src="img/bayes_theorem.jpg" alt="Bayes Theorem">
+            <ul>
+              <li>When we don't have a closed-form expression for the objective function, but we can get observations of the function at sampled values</li>
+              <li>When we don't have access to derivatives</li>
+              <li>When the objective function is non-convex</li>
+              <li>When each evaluation is costly in terms of time or money</li>
+            </ul>
+          </section>
+          
+          <section>
+            <h2>Bayesian Optimization</h2>
+            <img class="fragment current-visible" style="border:none;" data-src="img/mit_cheetah.png" alt="MIT cheetah">
+            <iframe class="fragment" style="position:fixed; top:160px; left:200px;" width="560" height="315" src="https://www.youtube.com/embed/_luhn7TLfWU" frameborder="0" allowfullscreen></iframe>
+          </section>
+          
+          <section>
+            <h2>Bayesian Optimization</h2>
+            <blockquote style="width:100%; font-size:22px; box-shadow:none;">
+              Bayesian optimization using a Gaussian process on a toy 1D design problem
+            </blockquote>
+            <img style="width:450px; border:none;" data-src="img/bayesopt_all.png" alt="bayesian optimization example">
+          </section>
+
+          <section>
+            <h2>Model Choices</h2>
+            <ul>
+              <li>Gaussian process (Spearmint, BayesOpt, MOE)</li>
+              <li>Random forest (SMAC)</li>
+              <li>Tree-structured Parzen Estimator (Hyperopt)</li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>Hyperopt</h2>
+            <ul>
+              <li>A Python package implementing a general framework for Bayesian optimization, plus several algorithms</li>
+              <li>Local synchronous or asynchronous execution using MongoDB for coordination </li>
+              <li>Handles awkward spaces with conditional hyperparameters</li>
+            </ul>
+          </section>
+          
+          <section>
+            <h2>Using Hyperopt</h2>
+            <ol>
+              <li data-markdown>Describe a **SEARCH SPACE**</li>
+              <li data-markdown>Define an **OBJECTIVE FUNCTION**</li>
+              <li data-markdown>**OPTIMIZE** that objective `(fmin)`</li>
+              <li data-markdown>**ANALYZE** results `(Trials)`</li>
+            </ol>
+          </section>
+         
+          <section>
+            <h3>Example: Optimizing a 2D quadratic function</h3>
+            <pre><code data-trim contenteditable>
+from hyperopt import hp, fmin, tpe, rand
+
+# define a search space
+space = [hp.uniform("x", 0, 1), hp.normal("y", 0, 1)]
+
+# define an objective function
+def f(args):
+  x, y = args
+  return x**2 + y**2
+
+# optimize it using algorithm of choice
+rand_best = fmin(f, space, algo=rand.suggest, max_evals=100)
+print rand_best
+
+tpe_best = fmin(f, space, algo=tpe.suggest, max_evals=100)
+print tpe_best
+            </code></pre>
+          </section>
+         
+          <section>
+            <h4>Example: Optimizing Sklearn Classifiers</h4>
+            <pre><code data-trim contenteditable style="max-height:500px; line-height:20px;">
+C = hp.lognormal("svm_C", 0, 1) # shared across conditional branches
+
+space = hp.pchoice("classifier", [
+    (0.1, GaussianNB()),
+    (0.2, SVC(
+        C=C, 
+        kernel="linear"
+    )),
+    (0.3, SVC(
+        C=C, 
+        kernel="rbf",
+        gamma=hp.lognormal("svm_rbf_width", 0, 1),
+    )),
+    (0.4, DTree(
+        criterion=hp.choice("dtree_criterion", [
+            "gini", 
+            "entropy"
+        ]),
+        max_depth=hp.choice("dtree_max_depth", [
+            None,
+            hp.qlognormal("dtree_max_depth_N",2, 2, 1),
+        ])
+    ))
+])
+
+            </code></pre>
+            <pre><code data-trim contenteditable style="line-height:20px;">
+def cv_score(clf):
+  y_pred = clf.fit(X_train, y_train).predict(X_test)
+  return mean_squared_error(y_test, y_pred)
+
+best = fmin(cv_score, space, algo=tpe.suggest, max_evals=100)
+            </code></pre>
+          </section>
+        </section>
+
+        <section>
+          <h2>Other Libraries</h2>
+          <ul style="font-size:28px;">
+            <li>Spearmint (Python)</li>
+            <li>BayesOpt (C++ with Python and Matlab/Octave interfaces)</li>
+            <li>SMAC (Java)</li>
+            <li>REMBO (Matlab)</li>
+            <li>MOE (C++/Python)</li>
+          </ul>
+        </section>
+
+        <section>
+          <img class="min-style-svg" width="200" height="200" data-src="img/bulb.svg" alt="lightbulb">
+          <h2>Resources</h2>
+          <ul>
+            <li>
+              Scikit-learn documentation: 
+              <a href="http://scikit-learn.org/stable/modules/generated/sklearn.grid_search.GridSearchCV.html" target="_blank">GridSearchCV</a>, 
+              <a href="http://scikit-learn.org/stable/modules/generated/sklearn.grid_search.RandomizedSearchCV.html" target="_blank">RandomizedSearchCV</a>
+            </li>
+            <li>
+              Scipy 2013 Paper: 
+              <a href="http://conference.scipy.org/proceedings/scipy2013/pdfs/bergstra_hyperopt.pdf" target="_blank">
+                Hyperopt: A Python Library for Optimizing the Hyperparameters of Machine Learning Algorithms
+              </a>
+            </li>
+            <li>Paper by James Bergstra and Yoshua Bengio: 
+              <a href="http://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a.pdf" target="_blank">
+                Random Search for Hyper-Parameter Optimization
+              </a>
+            </li>
+          </ul>
+				</section>
+
+        <section>
+          <img class="min-style-svg" width="200" height="200" data-src="img/rocket.svg" alt="rocket">
+          <h2>iPython Notebook Demo</h2>
+          <a href="" target="_blank">
+            Comparing grid search, random search, and hyperopt on the Boston housing dataset
+          </a>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+		<script>
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'convex', // none/fade/slide/convex/concave/zoom
+
+        math: {
+          mathjax:'http://cdn.mathjax.org/mathjax/latest/MathJax.js',
+          config:'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+        },
+        
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+          { src: 'plugin/notes/notes.js', async: true },
+          { src: 'plugin/math/math.js', async: true }
+				]
+			});
+    </script>
+	</body>
+</html>
