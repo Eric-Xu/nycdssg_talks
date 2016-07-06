@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>data science career panel</title>
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/solarized.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+    <style type="text/css">
+      .min-style-svg {
+        margin: 0         !important;
+        border: none      !important;
+        background: none  !important;
+        box-shadow: none  !important;
+      }
+    </style>
+  </head>
+
+	<body>
+		<div class="reveal">
+			<!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section>
+          <h3>Data science career panel</h3>
+          <img width="180" data-src="img/nycdssg_logo.jpeg" alt="nycdssg logo"> 
+          <p style="font-size:20px; font-style: italic;">NYC Data Science Study Group, July 5, 2016</p>
+          <br>
+          <h5 style="font-size:26px; text-align:left; margin-left:10%;">Key takeaways:</h5>
+          <ul style="font-size:26px; width:70%;">
+            <li>What does a data scientist do?</li>
+            <li>How do companies find candidates?</li>
+            <li>What are companies looking for when hiring a data scientist?</li>
+          </ul>
+        </section>
+
+        <section>
+          <h4>Data science career panel</h4>
+          <p style="font-size:18px; font-style: italic;">NYC Data Science Study Group, July 5, 2016</p>
+          <table style="font-size:22px;">
+            <tbody>
+              <tr>
+                <td style="border:none; text-align:center;">
+                  <img width="140" data-src="img/photo_eestola.jpg" alt="nycdssg logo" style="border-radius:50%;">
+                  <p>Evan Estola, Lead machine learning engineer at Meetup</p>
+                </td>
+                <td style="border:none; text-align:center;">
+                  <img width="140" data-src="img/photo_bwillard.jpg" alt="nycdssg logo" style="border-radius:50%;">
+                  <p>Brad Willard, Data science engineer at Squarespace</p>
+                </td>
+                <td style="border:none; text-align:center;">
+                  <img width="140" data-src="img/photo_swood.jpg" alt="nycdssg logo" style="border-radius:50%;">
+                  <p>Steven Wood, Technical recruiter at Squarespace</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="border:none; text-align:center;">
+                  <img width="140" data-src="img/photo_kkaufmann.jpg" alt="nycdssg logo" style="border-radius:50%;">
+                  <p>Kristian Kaufmann, Data lead at Vimeo</p>
+                </td>
+                <td style="border:none; text-align:center;">
+                  <img width="140" data-src="img/photo_szaben.jpg" alt="nycdssg logo" style="border-radius:50%;">
+                  <p>Samer Zaben, Senior technical recruiter at Vimeo</p>
+                </td>
+                <td style="border:none; text-align:center;">
+                  <img width="140" data-src="img/photo_exu.jpg" alt="nycdssg logo" style="border-radius:50%;">
+                  <p>Eric Xu (moderator), Data engineer at Outbrain</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section>
+          <h3>The Data Science Venn Diagram</h3>
+          <a href="http://drewconway.com/zia/2013/3/26/the-data-science-venn-diagram" target="_blank">
+            <img class="min-style-svg" data-src="img/ds_venn_diagram.png" alt="data science venn diagram">
+          </a>
+          <p>
+            <small>- Drew Conway</small>
+          </p>
+        </section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+		<script>
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'convex', // none/fade/slide/convex/concave/zoom
+        
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true }
+				]
+			});
+    </script>
+	</body>
+</html>
