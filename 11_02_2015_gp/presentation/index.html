@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>Gaussian processes</title>
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/night.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+    <style type="text/css">
+      /* custom css classes */
+      .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+        color: #e7ad52;
+      }
+      .default-highlight{
+        color: #e7ad52;
+      }
+      .min-style-svg {
+        margin: 0         !important;
+        border: none      !important;
+        background: none  !important;
+        box-shadow: none  !important;
+      }
+    </style>
+  </head>
+
+	<body>
+		<div class="reveal">
+			<!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+        <section>
+          <h2>Gaussian Processes</h2>
+          <img width="200" data-src="img/nycdssg_logo.jpeg" alt="nycdssg logo">
+          <p>
+            NYDSSG presentation by: Eric Xu
+            <br>
+            November 2, 2015 @Aol
+          </p>
+        </section>
+
+        <section>
+          <h2>Hi, I'm Eric</h2>
+          <ul style="margin-bottom:50px;">
+            <li>Rails developer</li>
+            <li>Data science course at General Assembly</li>
+            <li>Data science and engineering at Outbrain</li>
+          </ul>
+				</section>
+
+        <section>
+          <img class="min-style-svg" width="200" height="200" data-src="img/stopwatch.svg" alt="stopwatch">
+          <h2 style="margin-top:-40px;">Agenda</h2>
+          <ul>
+            <li>What is a Gaussian process?</li>
+            <li>GP in the kitchen</li>
+            <li>GP for hyperparameter optimization</li>
+          </ul>
+				</section>
+
+        <section>
+          <section>
+            <h2>Which one is a Gaussian distribution?</h2>
+            <img width="700" data-src="img/pdf_1.png" alt="probability density functions">
+            <p class="fragment">
+              They all are!
+            </p>
+          </section>
+
+          <section>
+            <h2>Gaussian Distribution</h2>
+            <p style="margin-top: 40px;">
+              Probability density function:
+            </p>
+            <div style="margin-top: 40px; font-size: 40px;">
+              $p(x)={1\over\sigma{\sqrt{2\pi}}}e^\left(-{(x-\mu)^2\over{2\sigma^2}}\right)$
+            </div>
+          </section>
+
+          <section>
+            <h2>Gaussian Distribution Properties</h2>
+            <div>
+              <img width="600" data-src="img/pdf_2.png" alt="probability density function">
+            </div>
+            <ul style="font-size:28px;">
+              <li>Symmetric around the mean</li>
+              <li>The mean, median, and mode are equal</li>
+              <li>~68% of the distribution area falls within 1 std of mean</li>
+              <li>~95% within 2 std of mean</li>
+              <li>Defined by the mean and standard deviation</li>
+            </ul>
+          </section>
+				</section>
+
+        <section>
+          <section>
+            <h2>Gaussian Process</h2>
+            <blockquote style="width:100%; box-shadow:none;">
+              Definition: A Gaussian process is a collection of random variables, any finite number of which have a joint Gaussian distribution.
+            </blockquote>
+            <ul style="margin-top:30px;">
+              Gaussian distribution:
+              <li>A probability distribution is a function that describes how likely you will obtain the different possible values of the random variable.</li>
+            </ul>
+            <ul style="margin-top:30px;">
+              Gaussian process:
+              <li>One can think of a Gaussian process as a distribution over functions.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Another way to think of GP</h2>
+            <img width="800" data-src="img/the_known_world.jpg" alt="GoT known world map">
+          </section>
+
+          <section>
+            <h2>Gaussian Process</h2>
+            <img style="border:none; width:600px;" data-src="img/mt_eden.png" alt="Mt Eden">
+            <ul style="margin-top:30px;">
+              <li>Physical quantities, such as height, can be represented with a Gaussian process.</li>
+              <li>Here, heights from the Mt. Eden volcano are predicted using observed measurements.</li>
+              <li>Inference in the Gaussian process can explain properties in between sampled points.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>GP in Geostatistics (aka Kriging)</h3>
+            <img width="800" data-src="img/kriging2.png" alt="Kriging example">
+            <ul>
+              <li>Named after <a href="https://en.wikipedia.org/wiki/Danie_G._Krige" target="_blank">Danie G. Krige</a></li>
+              <li>Pioneered the field of geostatistics by applying Gaussian process regression.
+              <li>Sought to estimate the most likely distribution of gold based on samples from a few boreholes.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>1-dim data interpolation using a Gaussian Process</h3>
+            <img data-src="img/gp_demo1.png" alt="GP demo1">
+            <img class="fragment" style="position:fixed; top:151px; left:21px;" data-src="img/gp_demo2.png" alt="GP demo2">
+            <img class="fragment" style="position:fixed; top:151px; left:21px;" data-src="img/gp_demo3.png" alt="GP demo3">
+            <img class="fragment" style="position:fixed; top:151px; left:21px;" data-src="img/gp_demo4.png" alt="GP demo4">
+            <img class="fragment" style="position:fixed; top:151px; left:21px;" data-src="img/gp_demo5.png" alt="GP demo5">
+            <img class="fragment" style="position:fixed; top:151px; left:21px;" data-src="img/gp_demo6.png" alt="GP demo6">
+            <img class="fragment" style="position:fixed; top:151px; left:21px;" data-src="img/gp_demo7.png" alt="GP demo7">
+            <img class="fragment" style="position:fixed; top:151px; left:21px;" data-src="img/gp_demo8.png" alt="GP demo8">
+          </section>
+
+          <section>
+            <h2>Gaussian Process Applications</h2>
+            <ul>
+              <li>Regression</li>
+              <li>Classification</li>
+              <li>Metric optimization</li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>MOE: "Metric Optimization Engine" by Yelp</h3>
+            <a href="http://yelp.github.io/MOE/" target="_blank"><img style="border:none; width:140px;" data-src="img/moe_logo.png" alt="MOE"></a>
+            <blockquote style="box-shadow:none;" cite="https://github.com/Yelp/MOE">
+              MOE is an efficient way to optimize a system's parameters, when evaluating parameters is time-consuming or expensive.
+            </blockquote>
+            <ul style="font-size:24px;">
+              <li>Optimizing the design of an engineering system (an airplane, the traffic network in a city, a combustion engine, a hospital).</li>
+              <li>Optimizing the parameters of a real-world experiment (a chemistry, biology, or physics experiment, a drug trial).</li>
+              <li>Optimizing tunable parameters of a machine-learning prediction method.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>The Eggsperiment</h2>
+            <p style="margin: 40px; font-style:italic;">How long does it take to boil the perfect soft boiled egg?</p>
+            <img style="width:400px;" data-src="img/soft_boiled_egg.png" alt="soft boiled egg">
+          </section>
+
+          <section>
+            <h2>The Eggsperiment</h2>
+            <p>Optimize boiling time using MOE's <a href="http://yelp.github.io/MOE/moe.views.rest.html#module-moe.views.rest.gp_next_points_kriging" target="_blank">gp_next_points_kriging</a> API:</p>
+            <pre><code lang="javascript" data-trim style="max-height:600px;">
+{
+  "domain_info": {
+    "dim": 1,               // number of features to tune
+    "domain_bounds": [
+      {
+        "max": 10.0,        // max boiling time
+        "min": 0.0          // min boiling time
+      }
+    ]
+  },
+  "gp_historical_info": {
+    "points_sampled": [     // a list of boiling times and our assigned scores
+      {
+        "value_var": 0.01,
+        "value": 4,         // our 'tastiness' score after boiling for 5 minutes
+        "point": [ 5.0 ]    // first boiling time observed
+      }
+    ]
+  },
+  "kriging_noise_variance": 1e-08,
+  "std_deviation_coef": 0.0,
+  "num_to_sample": 1
+}
+          </code></pre>
+          </section>
+
+          <section>
+            <h2>The Eggsperiment</h2>
+            <p style="margin: 40px; font-style:italic;">How long does it take to boil the perfect soft boiled egg?</p>
+            <img data-src="img/egg_demo1.png" alt="egg demo1">
+            <img class="fragment" style="position:fixed; top:215px; left:21px;" data-src="img/egg_demo2.png" alt="egg demo2">
+            <img class="fragment" style="position:fixed; top:215px; left:21px;" data-src="img/egg_demo3.png" alt="egg demo3">
+            <img class="fragment" style="position:fixed; top:215px; left:21px;" data-src="img/egg_demo4.png" alt="egg demo4">
+            <img class="fragment" style="position:fixed; top:215px; left:21px;" data-src="img/egg_demo5.png" alt="egg demo5">
+            <img class="fragment" style="position:fixed; top:215px; left:21px;" data-src="img/egg_demo6.png" alt="egg demo6">
+            <img class="fragment" style="position:fixed; top:215px; left:21px;" data-src="img/egg_demo7.png" alt="egg demo7">
+            <img class="fragment" style="position:fixed; top:2l5px; left:21px;" data-src="img/egg_demo8.png" alt="egg demo8">
+            <img class="fragment" style="position:fixed; top:215px; left:21px;" data-src="img/egg_demo9.png" alt="egg demo9">
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>Hyperparameter Optimization</h3>
+            <blockquote style="font-size:26px; width:100%; box-shadow:none;" cite="http://scikit-learn.org/stable/modules/generated/sklearn.neighbors.KNeighborsClassifier.html">
+              sklearn.neighbors.KNeighborsClassifier(
+              <span class="default-highlight">n_neighbors</span>=5,
+              <span class="default-highlight">weights</span>='uniform',
+              <span class="default-highlight">algorithm</span>='auto',
+              <span class="default-highlight">leaf_size</span>=30,
+              <span class="default-highlight">p</span>=2,
+              <span class="default-highlight">metric</span>='minkowski',
+              <span class="default-highlight">metric_params</span>=None)
+            </blockquote>
+            <ul>
+              <h4>Hyperparameters:</h4>
+              <li>High level settings pertaining to a machine learning model that govern how a model performs</li>
+              <br>
+              <h4>Common techniques:</h4>
+              <li>Grid search</li>
+              <li>Random search</li>
+              <li>Bayesian optimization <span class="fragment" style="font-size:22px;">(makes sense if calculating the prediction error for one choice of the parameters takes a long time, which might happen because the prediction method is complex and takes a long time to train, or because the data used to evaluate the error is huge.)</span></li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Hyperparameter Optimization</h2>
+            <p style="width:100%; margin:40px 0;">
+              An example from the SigOpt blog: <a href="http://blog.sigopt.com/post/111903668663/tuning-machine-learning-models" target="_blank">tuning machine learning models</a>
+            </p>
+            <table style="font-size:28px;">
+              <thead>
+                <tr>
+                  <th><a href="http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.GradientBoostingClassifier.html" target="_blank">Gradient Boosting Classifier</a> hyperparameter</th>
+                  <th>Value range</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>learning_rate</td>
+                  <td>0.01-1.0</td>
+                </tr>
+                <tr>
+                  <td>n_estimators</td>
+                  <td>20-500 (int)</td>
+                </tr>
+                <tr>
+                  <td>min_samples_split</td>
+                  <td>1-4 (int)</td>
+                </tr>
+                <tr>
+                  <td>min_samples_leaf</td>
+                  <td>1-3 (int)</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section>
+            <h2>Hyperparameter Optimization</h2>
+            <p style="width:100%; margin:40px 0;">
+              An example from the SigOpt blog: <a href="http://blog.sigopt.com/post/111903668663/tuning-machine-learning-models" target="_blank">tuning machine learning models</a>
+            </p>
+            <table style="font-size:22px;">
+              <thead>
+                <tr>
+                  <th style="width:30%;">Public dataset</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="https://archive.ics.uci.edu/ml/datasets/Poker+Hand" target="_blank">Poker hands</a></td>
+                  <td>The poker dataset tries to classify poker hands given a set of 5 cards; we’ll train on 10,000 random poker hands and test using a different 10,000 random poker hands.</td>
+                </tr>
+                <tr>
+                  <td><a href="https://archive.ics.uci.edu/ml/datasets/Connect-4" target="_blank">Connect-4</a></td>
+                  <td>The connect-4 dataset classifies the winner of a game of Connect Four given a game state; we’ll train on 60,000 games and test on 7,557 games.</td>
+                </tr>
+                <tr>
+                  <td><a href="http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass.html#usps" target="_blank">USPS zip codes</a></td>
+                  <td>The USPS dataset tries to classify handwritten digits in zip codes; we’ll train on 7,291 images and test on 2,007 images.</td>
+                </tr>
+                <tr>
+                  <td><a href="https://archive.ics.uci.edu/ml/datasets/Statlog+%28Landsat+Satellite%29" target="_blank">Satellite images</a></td>
+                  <td>The satimage dataset attempts to classify soil types using satellite images; we’ll train on 9,539 images and test on 1,331 images.</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section>
+            <h2>Hyperparameter Optimization</h2>
+            <p style="width:100%; margin:40px 0;">
+              An example from the SigOpt blog: <a href="http://blog.sigopt.com/post/111903668663/tuning-machine-learning-models" target="_blank">tuning machine learning models</a>
+            </p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Classifier, Dataset</th>
+                  <th>Speed: SigOpt vs Grid</th>
+                  <th>Accuracy: SigOpt vs Grid</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>GBC, connect-4</td>
+                  <td>+1914%</td>
+                  <td>+0.1%</td>
+                </tr>
+                <tr>
+                  <td>GBC, poker</td>
+                  <td>+379%</td>
+                  <td>+0.5%</td>
+                </tr>
+                <tr>
+                  <td>GBC, usps</td>
+                  <td>+838%</td>
+                  <td>+0.4%</td>
+                </tr>
+                <tr>
+                  <td>GBC, satimage</td>
+                  <td>+6000%</td>
+                  <td>+0.0%</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section>
+            <h2>Hyperparameter Optimization</h2>
+            <p style="width:100%; margin:40px 0;">
+              An example from the SigOpt blog: <a href="http://blog.sigopt.com/post/111903668663/tuning-machine-learning-models" target="_blank">tuning machine learning models</a>
+            </p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Classifier, Dataset</th>
+                  <th>Speed: SigOpt vs Random</th>
+                  <th>Accuracy: SigOpt vs Random</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>GBC, connect-4</td>
+                  <td>+1342%</td>
+                  <td>+1.6%</td>
+                </tr>
+                <tr>
+                  <td>GBC, poker</td>
+                  <td>+3%</td>
+                  <td>+0.5%</td>
+                </tr>
+                <tr>
+                  <td>GBC, usps</td>
+                  <td>+138%</td>
+                  <td>+0.6%</td>
+                </tr>
+                <tr>
+                  <td>GBC, satimage</td>
+                  <td>+0%</td>
+                  <td>+0.0%</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2>Other Bayesian Optimization Libraries</h2>
+            <ul>
+              <li><a href="https://github.com/HIPS/Spearmint/" target="_blank">Spearmint</a> (Python)</li>
+              <li><a href="http://hyperopt.github.io/hyperopt/" target="_blank">Hyperopt</a> (Python)</li>
+              <li><a href="http://rmcantin.bitbucket.org/html/" target="_blank">BayesOpt</a> (C++ with Python and Matlab/Octave interfaces)</li>
+            </ul>
+          </section>
+
+          <section>
+            <img class="min-style-svg" width="200" height="200" data-src="img/bulb.svg" alt="lightbulb">
+            <h2>Gaussian Process Resources</h2>
+            <ul>
+              <li>
+                <a href="http://www.gaussianprocess.org/gpml/" target="_blank">Gaussian Processes for Machine Learning</a> (textbook)
+              </li>
+              <li>
+                <a href="http://scikit-learn.org/dev/modules/gaussian_process.html" target="_blank">Gaussian process on SciKit-learn</a> (regression and classification examples)
+              </li>
+              <li>
+                <a href="http://gpss.cc/" target="_blank">Gaussian process summer schools</a> (video lectures)
+              </li>
+              <li>
+                <a href="http://dan.iel.fm/george/current/" target="_blank">George</a> (Python library for GP Regression)
+              </li>
+            </ul>
+          </section>
+				</section>
+
+        <section>
+          <section>
+            <img style="border:none; background:#111;" data-src="img/fin_the_human.gif" alt="Finn">
+            <h4>Contact me: exu.data@gmail.com</h4>
+          </section>
+        </section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+		<script>
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'convex', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+          { src: 'plugin/notes/notes.js', async: true },
+          { src: 'plugin/math/math.js', async: true }
+				]
+			});
+    </script>
+	</body>
+</html>
